@@ -1,17 +1,15 @@
+import csv
 import datetime
-import pandas as pd
 import pickle
 import psutil
 import os
 import sys
 
-import time
-
 
 # Locations for storage and export files
-DATA_STORE_FILE = # Insert file path for data pickle
-SYSTEM_DATA_EXTRACT_FILE = # Insert file path for system data CSV extract
-PROCESS_DATA_EXTRACT_FILE = # Insert file path for process data CSV extract
+DATA_STORE_FILE = 'C:/ross/repository/PerformanceTrack/data.pik' # Insert file path for data pickle
+SYSTEM_DATA_EXTRACT_FILE = 'C:/ross/repository/PerformanceTrack/system_log.csv' # Insert file path for system data CSV extract
+PROCESS_DATA_EXTRACT_FILE = 'C:/ross/repository/PerformanceTrack/process_log.csv' # Insert file path for process data CSV extract
 
 # Process specific stats name filter
 PROCESS_FILTER = ['java', 'python']
@@ -19,6 +17,8 @@ PROCESS_FILTER = ['java', 'python']
 # Time for CPU Usage calculations (in seconds)
 CPU_CALC_TIME = 1.0
 
+
+# Log performance for system and process level metrics and store
 def log_current_state(os_type):
 
     time = datetime.datetime.now()
@@ -28,6 +28,7 @@ def log_current_state(os_type):
     store(new_system_data, new_processes_data)
 
 
+# Analyze performance of system level metrics
 def system_performance_metrics(time):
 
     # Setup entry dictionary and log time
@@ -47,6 +48,7 @@ def system_performance_metrics(time):
     return entry
 
 
+# Analyze performance of filtered processes
 def process_performance_metrics(time, os_type):
 
     filtered_processes = []
@@ -73,11 +75,12 @@ def process_performance_metrics(time, os_type):
 
     return filtered_processes
 
+
 # Store new metrics in data pickle
 def store(new_system_data, new_processes_data):
 
     if not os.path.isfile(DATA_STORE_FILE):
-        data = {'system':[], 'processes':[]}
+        data = {'system': [], 'processes': []}
     else:
         data = pickle.load(open(DATA_STORE_FILE, 'rb'))
 
@@ -87,6 +90,7 @@ def store(new_system_data, new_processes_data):
     pickle.dump(data, open(DATA_STORE_FILE, 'wb'))
 
 
+# Generate CSV files from data pickle
 def generate_extract():
 
     data = pickle.load(open(DATA_STORE_FILE, 'rb'))
@@ -94,11 +98,21 @@ def generate_extract():
     system_data = data['system']
     process_data = data['processes']
 
-    system_df = pd.DataFrame(system_data)
-    system_df.to_csv(SYSTEM_DATA_EXTRACT_FILE, index=False)
+    system_data_headers = ['cpu_usage', 'datetime', 'mem_available', 'mem_percent_used', 'mem_total', 'mem_used']
+    write_csv(system_data, system_data_headers, SYSTEM_DATA_EXTRACT_FILE)
 
-    process_df = pd.DataFrame(process_data)
-    process_df.to_csv(PROCESS_DATA_EXTRACT_FILE, index=False)
+    process_data_headers = ['cpu_usage', 'datetime', 'filter', 'name', 'pid', 'rss_memory', 'vms_memory']
+    write_csv(process_data, process_data_headers, PROCESS_DATA_EXTRACT_FILE)
+
+
+# Write CSV file from a list of dictionaries
+def write_csv(data, headers, file_location):
+
+    csv_file = open(file_location, 'w+', newline='')
+    writer = csv.DictWriter(csv_file, headers)
+
+    writer.writeheader()
+    writer.writerows(data)
 
 
 if __name__ == '__main__':
