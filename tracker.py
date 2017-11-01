@@ -7,9 +7,9 @@ import sys
 
 
 # Locations for storage and export files
-DATA_STORE_FILE = 'C:/ross/repository/PerformanceTrack/data.pik' # Insert file path for data pickle
-SYSTEM_DATA_EXTRACT_FILE = 'C:/ross/repository/PerformanceTrack/system_log.csv' # Insert file path for system data CSV extract
-PROCESS_DATA_EXTRACT_FILE = 'C:/ross/repository/PerformanceTrack/process_log.csv' # Insert file path for process data CSV extract
+DATA_STORE_FILE = 'data.pik' # Add folder path for data pickle
+SYSTEM_DATA_EXTRACT_FILE = 'system_log.csv' # Add folder path for system data CSV extract
+PROCESS_DATA_EXTRACT_FILE = 'process_log.csv' # Add folder path for process data CSV extract
 
 # Process specific stats name filter
 PROCESS_FILTER = ['java', 'python']
