@@ -1,1 +1,1 @@
-python [Insert file location here] log linux
+python tracker.py log linux

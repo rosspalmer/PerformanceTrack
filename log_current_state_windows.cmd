@@ -1,1 +1,1 @@
-python [Insert file location here] log windows
+python tracker.py log windows
